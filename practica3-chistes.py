@@ -4,12 +4,13 @@
 from xml.sax import make_parser
 from xml.sax.handler import ContentHandler
 
+
 class ChistesHandler(ContentHandler):
     """
     Clase para manejar chistes malos
     """
 
-    def __init__ (self):
+    def __init__(self):
         """
         Constructor. Inicializamos las variables
         """
@@ -37,6 +38,7 @@ class ChistesHandler(ContentHandler):
         Método que se llama al cerrar una etiqueta
         """
         if name == 'pregunta':
+            print(self.pregunta)
             self.pregunta = ""
             self.inPregunta = False
         if name == 'respuesta':
@@ -51,6 +53,7 @@ class ChistesHandler(ContentHandler):
             self.pregunta = self.pregunta + char
         if self.inRespuesta:
             self.respuesta += char
+            print(self.respuesta)
 
 if __name__ == "__main__":
     """
