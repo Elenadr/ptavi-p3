@@ -9,53 +9,31 @@ from xml.sax.handler import ContentHandler
 
 class SmallSMILHandler(ContentHandler):
     def __init__(self):
-
-        self.width = ""
-        self.height = ""
-        self.background_color = ""
-        self.id = ""
-        self.top = ""
-        self.bottom = ""
-        self.left = ""
-        self.right = ""
-        self.src = ""
-        self.region = ""
-        self.begin = ""
-        self.dur = ""
-        self.todo = []
+        self.etiq_atrib = {
+            'root-layout': ['width', 'height', 'background-color'],
+            'region': ['id', 'top', 'bottom', 'left', 'right'],
+            'img': ['src', 'region', 'begin', 'dur'],
+            'audio': ['src', 'begin', 'dur'],
+            'textstream': ['src', 'region']}
+        self.etiqs = []
 
     def startElement(self, name, attrs):
         """
         Método que se llama cuando se abre una etiqueta
         """
-        if name == 'root-layout':
-            self.width = attrs.get('width', "")
-            self.height = attrs.get('height', "")
-            self.background_color = attrs.get('background_color', "")
-        elif name == 'region':
-            self.id = attrs.get('id', "")
-            self.top = attrs.get('top', "")
-            self.bottom = attrs.get('bottom', "")
-            self.left = attrs.get('left', "")
-            self.right = attrs.get('right', "")
-        elif name == 'img':
-            self.src = attrs.get('src', "")
-            self.region = attrs.get('region', "")
-            self.begin = attrs.get('begin', "")
-            self.dur = attrs.get('dur', "")
-        elif name == 'audio':
-            self.src = attrs.get('src', "")
-            self.begin = attrs.get('begin', "")
-            self.dur = attrs.get('dur', "")
-        elif name == 'textstream':
-            self.src = attrs.get('src', "")
-            self.region = attrs.get('region', "")
+        if name in self.etiq_atrib:
+            atribs = {}
+            atribs['etiq'] = name
+            for atrib in self.etiq_atrib[name]:
+                atribs[atrib] = attrs.get(atrib, "")
+            self.etiqs.append(atribs)
 
     def get_tags(self):
-        return self.todo
+        return self.etiqs
 
 if __name__ == "__main__":
     parser = make_parser()
-    SmilHandler = SmallSMILHandler()
-    parser.setContentHandler(SmilHandler)
+    handler = SmallSMILHandler()
+    parser.setContentHandler(handler)
     parser.parse(open('karaoke.smil'))
+    print(handler.get_tags())
