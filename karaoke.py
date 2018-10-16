@@ -29,11 +29,31 @@ class KaraokeLocal:
             data += '\n'
         return data
 
-if __name__ == "__main__":
+    def to_json(self, file, fich_json=None):
+
+        if fich_json is None:
+            fich_json = file.split('.')[0] + '.json'
+        json.dump(self.etiqs, open(fich_json, "w"))
+
+    def do_local(self):
+
+        for line in self.etiqs:
+            for atrib in line:
+                if line[atrib][0:7] == 'http://':
+                    direction = line[atrib].split('/')[-1]
+                    urllib.request.urlretrieve(line[atrib])
+                    line[atrib] = direction
+
+if __name__ == '__main__':
 
     try:
-        karaoke = KaraokeLocal(sys.argv[1])
+        file = sys.argv[1]
+        karaoke = KaraokeLocal(file)
 
     except IndexError:
         sys.exit('usage error: python3 karaoke.py file.smil')
+    print(karaoke)
+    karaoke.to_json(file)
+    karaoke.do_local()
+    karaoke.to_json(file, 'local.json')
     print(karaoke)
